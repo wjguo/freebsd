@@ -489,7 +489,7 @@ iwm_set_ucode_api_flags(struct iwm_softc *sc, const uint8_t *data,
 	uint32_t api_index = le32toh(ucode_api->api_index);
 	uint32_t api_flags = le32toh(ucode_api->api_flags);
 	int i;
-
+#if 0
 	if (api_index >= howmany(IWM_NUM_UCODE_TLV_API, 32)) {
 		device_printf(sc->sc_dev,
 		    "api flags index %d larger than supported by driver\n",
@@ -497,6 +497,7 @@ iwm_set_ucode_api_flags(struct iwm_softc *sc, const uint8_t *data,
 		/* don't return an error so we can load FW that has more bits */
 		return 0;
 	}
+#endif
 
 	for (i = 0; i < 32; i++) {
 		if (api_flags & (1U << i))
@@ -866,8 +867,7 @@ iwm_read_firmware(struct iwm_softc *sc)
 			device_printf(sc->sc_dev,
 			    "%s: unknown firmware section %d, abort\n",
 			    __func__, tlv_type);
-			error = EINVAL;
-			goto parse_out;
+			//error = EINVAL;
 		}
 	}
 
@@ -5628,6 +5628,7 @@ iwm_intr(void *arg)
 #define	PCI_PRODUCT_INTEL_WL_8260_2	0x24f4
 #define	PCI_PRODUCT_INTEL_WL_8265_1	0x24fd
 #define	PCI_PRODUCT_INTEL_WL_9560_1	0x9df0
+#define	PCI_PRODUCT_INTEL_WL_9260_1	0x2526
 
 static const struct iwm_devices {
 	uint16_t		device;
@@ -5646,6 +5647,7 @@ static const struct iwm_devices {
 	{ PCI_PRODUCT_INTEL_WL_8260_2, &iwm8260_cfg },
 	{ PCI_PRODUCT_INTEL_WL_8265_1, &iwm8265_cfg },
 	{ PCI_PRODUCT_INTEL_WL_9560_1, &iwm9560_cfg },
+	{ PCI_PRODUCT_INTEL_WL_9260_1, &iwm9260_cfg },
 };
 
 static int
@@ -5769,6 +5771,7 @@ iwm_attach(device_t dev)
 
 	sc->sc_dev = dev;
 	sc->sc_attached = 1;
+        sc->sc_debug = (sc->sc_debug | IWM_DEBUG_RESET | IWM_DEBUG_INTR | IWM_DEBUG_FW | IWM_DEBUG_FATAL | IWM_DEBUG_CMD);
 	IWM_LOCK_INIT(sc);
 	mbufq_init(&sc->sc_snd, ifqmaxlen);
 	callout_init_mtx(&sc->sc_watchdog_to, &sc->sc_mtx, 0);
