@@ -2602,6 +2602,7 @@ iwm_pcie_load_given_ucode_8000(struct iwm_softc *sc,
 	IWM_DPRINTF(sc, IWM_DEBUG_RESET, "working with %s CPU\n",
 		    image->is_dual_cpus ? "Dual" : "Single");
 
+	iwm_write_prph(sc, IWM_WFPM_GP2, 0x01010101);
 	/* configure the ucode to be ready to get the secured image */
 	/* release CPU reset */
 	if (iwm_nic_lock(sc)) {
