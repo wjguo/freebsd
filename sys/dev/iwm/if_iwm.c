@@ -793,7 +793,6 @@ iwm_read_firmware(struct iwm_softc *sc)
 			break;
 		}
 
-		case 48: /* undocumented TLV */
 		case IWM_UCODE_TLV_SDIO_ADMA_ADDR:
 		case IWM_UCODE_TLV_FW_GSCAN_CAPA:
 			/* ignore, not used by current driver */
@@ -866,8 +865,6 @@ iwm_read_firmware(struct iwm_softc *sc)
 			device_printf(sc->sc_dev,
 			    "%s: unknown firmware section %d, abort\n",
 			    __func__, tlv_type);
-			error = EINVAL;
-			goto parse_out;
 		}
 	}
 
